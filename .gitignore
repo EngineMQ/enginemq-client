@@ -12,3 +12,7 @@ build
 
 # dotenv environment variables file
 .env
+
+# Compiled files
+*.js
+*.d.ts
