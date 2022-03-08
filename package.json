@@ -17,8 +17,8 @@
     "example-subscribe": "nodemon examples/simpleClient.ts -- subscribe",
     "example-publish": "nodemon examples/simpleClient.ts -- publish",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "tsc --build --clean && tsc --build --force",
-    "build:clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "build": "tsc --build --clean && tsc --build --force"
   },
   "keywords": [
     "engine-mq",
