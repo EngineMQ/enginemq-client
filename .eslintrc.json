@@ -1,0 +1,169 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "script"
+    },
+    "overrides": [
+        {
+            "files": [
+                "*.ts"
+            ],
+            "excludedFiles": [],
+            "extends": [
+                "plugin:@typescript-eslint/recommended",
+                "plugin:@typescript-eslint/recommended-requiring-type-checking"
+            ],
+            "parserOptions": {
+                "project": [
+                    "./tsconfig.json"
+                ]
+            },
+            "rules": {
+                "no-case-declarations": "off",
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-empty-function": "off",
+                "@typescript-eslint/dot-notation": "error",
+                "@typescript-eslint/no-duplicate-imports": "error",
+                "@typescript-eslint/no-extra-parens": "warn",
+                "@typescript-eslint/no-extraneous-class": "error",
+                "@typescript-eslint/no-implied-eval": "error",
+                "@typescript-eslint/no-invalid-this": "error",
+                "@typescript-eslint/no-loss-of-precision": "error",
+                "@typescript-eslint/no-magic-numbers": [
+                    "error",
+                    {
+                        "ignoreEnums": true,
+                        "ignore": [
+                            0,
+                            1,
+                            2,
+                            100,
+                            1000,
+                            1024
+                        ]
+                    }
+                ],
+                "@typescript-eslint/no-unnecessary-condition": "error",
+                "@typescript-eslint/no-unnecessary-qualifier": "error",
+                "@typescript-eslint/promise-function-async": "error",
+                "@typescript-eslint/naming-convention": [
+                    "error",
+                    {
+                        "selector": [
+                            "typeLike",
+                            "class"
+                        ],
+                        "format": [
+                            "PascalCase"
+                        ]
+                    },
+                    {
+                        "selector": "interface",
+                        "format": [
+                            "PascalCase"
+                        ],
+                        "custom": {
+                            "regex": "^(I)*[A-Za-z]+$",
+                            "match": true
+                        }
+                    },
+                    {
+                        "selector": [
+                            "enumMember"
+                        ],
+                        "format": [
+                            "UPPER_CASE",
+                            "PascalCase"
+                        ]
+                    }
+                ],
+                "@typescript-eslint/no-shadow": "error",
+                "@typescript-eslint/no-throw-literal": "error",
+                "@typescript-eslint/no-useless-constructor": "error",
+                "@typescript-eslint/require-await": "error",
+                "@typescript-eslint/return-await": "error"
+            }
+        }
+    ],
+    "env": {
+        "browser": false,
+        "node": true,
+        "commonjs": true,
+        "es2022": true
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "rules": {
+        "no-case-declarations": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/dot-notation": "error",
+        "@typescript-eslint/no-duplicate-imports": "error",
+        "@typescript-eslint/no-extra-parens": "warn",
+        "@typescript-eslint/no-extraneous-class": "error",
+        "@typescript-eslint/no-implied-eval": "error",
+        "@typescript-eslint/no-invalid-this": "error",
+        "@typescript-eslint/no-loss-of-precision": "error",
+        "@typescript-eslint/no-magic-numbers": [
+            "error",
+            {
+                "ignoreEnums": true,
+                "ignore": [
+                    0,
+                    1,
+                    2,
+                    100,
+                    1000,
+                    1024
+                ]
+            }
+        ],
+        "@typescript-eslint/no-unnecessary-condition": "error",
+        "@typescript-eslint/no-unnecessary-qualifier": "error",
+        "@typescript-eslint/promise-function-async": "error",
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": [
+                    "typeLike",
+                    "class"
+                ],
+                "format": [
+                    "PascalCase"
+                ]
+            },
+            {
+                "selector": "interface",
+                "format": [
+                    "PascalCase"
+                ],
+                "custom": {
+                    "regex": "^(I)*[A-Za-z]+$",
+                    "match": true
+                }
+            },
+            {
+                "selector": [
+                    "enumMember"
+                ],
+                "format": [
+                    "UPPER_CASE",
+                    "PascalCase"
+                ]
+            }
+        ],
+        "@typescript-eslint/no-shadow": "error",
+        "@typescript-eslint/no-throw-literal": "error",
+        "@typescript-eslint/no-useless-constructor": "error",
+        "@typescript-eslint/require-await": "error",
+        "@typescript-eslint/return-await": "error"
+    }
+}
