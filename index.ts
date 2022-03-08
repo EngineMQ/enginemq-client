@@ -130,7 +130,7 @@ export class EngineMqClient extends MsgpackSocket {
         messageOptions = { ...defaultEngineMqPublishMessageOptions, ...messageOptions };
         clientOptions = { ...defaultEngineMqPublishClientOptions, ...clientOptions };
         if (!messageOptions.messageId)
-            messageOptions.messageId = short(short.constants.flickrBase58).generate();
+            messageOptions.messageId = short(short.constants.flickrBase58).generate().toLowerCase();
 
         if (!new RegExp(types.MESSAGE_ID_FORMAT).test(messageOptions.messageId))
             throw new EngineMqClientError(`Engine-MQ publish invalid messageId format: ${messageOptions.messageId}`);
