@@ -32,6 +32,7 @@ client.on('mq-message', (
     delivery: enginemq.types.BrokerMessageDelivery
 ) => {
     console.dir(`[${topic}]@${delivery.options.messageId} ${JSON.stringify(data)}`);
+    ack;
     if (Math.random() < 0.2)
         ack.reject({ reason: "DB error" });
     else {
