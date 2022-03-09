@@ -11,10 +11,8 @@
     "npm": "~8"
   },
   "files": [
-    "./*.js",
-    "./*.d.ts",
-    "./common/*.js",
-    "./common/*.d.ts"
+    "**/*.js",
+    "**/*.d.ts"
   ],
   "repository": {
     "type": "git",
