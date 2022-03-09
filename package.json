@@ -1,7 +1,7 @@
 {
   "name": "engine-mq-client",
   "description": "Engine-MQ Message queue Client lib",
-  "author": "BCsabaEngine",
+  "author": "BCsabaEngine <csaba@balazs-magyar.hu>",
   "license": "MIT",
   "version": "1.0.2",
   "main": "./index.js",
@@ -27,7 +27,8 @@
     "example-publish": "nodemon examples/simpleClient.ts -- publish",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "tsc --build --clean",
-    "build": "tsc --build --clean && tsc --build --force"
+    "build": "tsc --build --clean && tsc --build --force",
+    "npm-publish": "npm run build && npm version patch && npm publish && npm run clean"
   },
   "keywords": [
     "engine-mq",
