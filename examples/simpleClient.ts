@@ -50,7 +50,7 @@ client.on('mq-message', (
         cnt = 0;
         start = (new Date()).getTime();
     }
-    ack.ack();
+    ack.finish();
 });
 
 if (args[0] == 'subscribe')
