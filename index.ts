@@ -1,6 +1,6 @@
 import { version as enginemq } from './package.json';
 import { diff as semverDiff, major as semverMajor } from 'semver';
-import * as short from 'short-uuid';
+import { customAlphabet } from 'nanoid';
 import * as net from 'net';
 
 import * as types from './common/messageTypes';
@@ -14,6 +14,8 @@ const HEARTBEAT_FREQ_PERCENT = 45;
 const RECONNECT_MAX_WAIT = 750;
 const ACK_WAITINGLIST_TIMEOUT_SEC = 30;
 const ACK_WAITINGLIST_MIN_LENGTH = 100;
+
+const nanoid = customAlphabet(types.MESSAGE_ID_ALPHABET, types.MESSAGE_ID_LENGTH_DEFAULT);
 
 export class EngineMqClientError extends Error { }
 
@@ -130,9 +132,9 @@ export class EngineMqClient extends MsgpackSocket {
         messageOptions = { ...defaultEngineMqPublishMessageOptions, ...messageOptions };
         clientOptions = { ...defaultEngineMqPublishClientOptions, ...clientOptions };
         if (!messageOptions.messageId)
-            messageOptions.messageId = short(short.constants.flickrBase58).generate().toLowerCase();
+            messageOptions.messageId = nanoid();
 
-        if (!new RegExp(types.MESSAGE_ID_FORMAT).test(messageOptions.messageId))
+        if (!new RegExp(types.MESSAGE_ID_MASK).test(messageOptions.messageId))
             throw new EngineMqClientError(`Engine-MQ publish invalid messageId format: ${messageOptions.messageId}`);
         if (messageOptions.delayMs && messageOptions.delayMs < 0)
             throw new EngineMqClientError(`Engine-MQ publish invalid delayMs value: ${messageOptions.delayMs}`);
