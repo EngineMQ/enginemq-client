@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/Engine-MQ/engine-mq-client/issues"
   },
-  "homepage": "https://github.com/Engine-MQ/engine-mq-client",
+  "homepage": "https://engine-mq.github.io/",
   "scripts": {
     "example-subscribe": "nodemon examples/simpleClient.ts -- subscribe",
     "example-publish": "nodemon examples/simpleClient.ts -- publish",
