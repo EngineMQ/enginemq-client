@@ -1,1 +1,1 @@
-# NodeJS client library for Engine-MQ
+# NodeJS client library for EngineMQ

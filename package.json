@@ -1,6 +1,6 @@
 {
-  "name": "engine-mq-client",
-  "description": "Engine-MQ Message queue Client lib",
+  "name": "enginemq-client",
+  "description": "EngineMQ Message queue Client lib",
   "author": "BCsabaEngine <csaba@balazs-magyar.hu>",
   "license": "MIT",
   "version": "1.0.2",
@@ -16,12 +16,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Engine-MQ/engine-mq-client"
+    "url": "https://github.com/EngineMQ/enginemq-client"
   },
   "bugs": {
-    "url": "https://github.com/Engine-MQ/engine-mq-client/issues"
+    "url": "https://github.com/EngineMQ/enginemq-client/issues"
   },
-  "homepage": "https://engine-mq.github.io/",
+  "homepage": "https://enginemq.github.io/",
   "scripts": {
     "example-subscribe": "nodemon examples/simpleClient.ts -- subscribe",
     "example-publish": "nodemon examples/simpleClient.ts -- publish",
@@ -31,7 +31,7 @@
     "npm-publish": "npm run build && npm version patch && npm publish && npm run clean"
   },
   "keywords": [
-    "engine-mq",
+    "enginemq",
     "message queue",
     "mqueue"
   ],

@@ -1,5 +1,5 @@
 import * as enginemq from '../index';
-//import * as enginemq from 'engine-mq-client';
+//import * as enginemq from 'enginemq-client';
 
 const args = process.argv.slice(2);
 

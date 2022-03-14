@@ -126,8 +126,8 @@ export class EngineMqClient extends MsgpackSocket {
         message: object,
         messageOptions: Partial<types.ClientMessagePublishOptions> = defaultEngineMqPublishMessageOptions,
         clientOptions: EngineMqPublishClientOptions = defaultEngineMqPublishClientOptions): Promise<string> {
-        if (!this._connected) throw new EngineMqClientError('Engine-MQ client not connected');
-        if (!this._ready) throw new EngineMqClientError('Engine-MQ client not in ready state');
+        if (!this._connected) throw new EngineMqClientError('EngineMQ client not connected');
+        if (!this._ready) throw new EngineMqClientError('EngineMQ client not in ready state');
 
         messageOptions = { ...defaultEngineMqPublishMessageOptions, ...messageOptions };
         clientOptions = { ...defaultEngineMqPublishClientOptions, ...clientOptions };
@@ -135,11 +135,11 @@ export class EngineMqClient extends MsgpackSocket {
             messageOptions.messageId = nanoid();
 
         if (!new RegExp(types.MESSAGE_ID_MASK).test(messageOptions.messageId))
-            throw new EngineMqClientError(`Engine-MQ publish invalid messageId format: ${messageOptions.messageId}`);
+            throw new EngineMqClientError(`EngineMQ publish invalid messageId format: ${messageOptions.messageId}`);
         if (messageOptions.delayMs && messageOptions.delayMs < 0)
-            throw new EngineMqClientError(`Engine-MQ publish invalid delayMs value: ${messageOptions.delayMs}`);
+            throw new EngineMqClientError(`EngineMQ publish invalid delayMs value: ${messageOptions.delayMs}`);
         if (messageOptions.expirationMs && messageOptions.expirationMs < 0)
-            throw new EngineMqClientError(`Engine-MQ publish invalid expirationMs value: ${messageOptions.expirationMs}`);
+            throw new EngineMqClientError(`EngineMQ publish invalid expirationMs value: ${messageOptions.expirationMs}`);
 
         const cmPublish: types.ClientMessagePublish = { topic, message, options: messageOptions as types.ClientMessagePublishOptions };
         cmPublish.topic = (cmPublish.topic || '').toLowerCase();
