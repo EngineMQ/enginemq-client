@@ -5,7 +5,7 @@ const args = process.argv.slice(2);
 
 enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 1500;
 
-const client = new enginemq.EngineMqClient({ clientId: 'Cli-ONE', connectAutoStart: false, maxWorkers: 2 });
+const client = new enginemq.EngineMqClient({ clientId: 'Cli-ONE', connectAutoStart: false, maxWorkers: 4 });
 
 client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconnectCount));
 client.on('mq-ready', (serverVersion, heartbeatSec) => {

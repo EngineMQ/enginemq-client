@@ -1,4 +1,9 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+    "compilerOptions": {}
+  },
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
