@@ -151,9 +151,12 @@ export class EngineMqClient extends MsgpackSocket {
             const messageId = (messageOptions as types.ClientMessagePublishOptions).messageId;
             this.addToPublishAckWaitingList(
                 messageId,
-                () => {
+                (errorMessage?: string) => {
                     clearTimeout(timerTimeout);
-                    resolve(messageId);
+                    if (errorMessage)
+                        reject(new Error(errorMessage))
+                    else
+                        resolve(messageId);
                 });
         });
     }
@@ -261,10 +264,10 @@ export class EngineMqClient extends MsgpackSocket {
     private publishAckWaitingList = new Map<
         string,
         {
-            resolver: () => void,
+            resolver: (errorMessage?: string) => void,
             time: number
         }>();
-    private addToPublishAckWaitingList(messageId: string, resolver: () => void) {
+    private addToPublishAckWaitingList(messageId: string, resolver: (errorMessage?: string) => void) {
         this.publishAckWaitingList.set(messageId, {
             resolver: resolver,
             time: nowMs()
@@ -296,7 +299,7 @@ export class EngineMqClient extends MsgpackSocket {
         const wlItem = this.publishAckWaitingList.get(bmPublishAck.messageId);
         this.publishAckWaitingList.delete(bmPublishAck.messageId);
         if (wlItem)
-            wlItem.resolver();
+            wlItem.resolver(bmPublishAck.errorMessage);
 
         this.maintainPublishAckWaitingList();
     }
