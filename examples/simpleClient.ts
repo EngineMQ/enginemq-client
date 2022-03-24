@@ -83,7 +83,6 @@ const loop = async () => {
                             priority: Math.floor(Math.random() * (enginemq.types.MAX_MESSAGE_PRIORITY - 1))
                         },
                         { timeoutMs: 1500 })
-                    //console.log(msgId);
                     break;
                 case 1:
                     await client.publish(
@@ -115,7 +114,7 @@ const loop = async () => {
                     break;
             }
         }
-        catch (error) { if (error instanceof Error) console.log(error.message) };
+        catch (error) { if (error instanceof Error) console.log("HIBA: " + error.message) };
         if (++mode > 2) mode = 0;
         count++;
         if (count % 1000 == 0) {
