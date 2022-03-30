@@ -363,7 +363,7 @@ export class EngineMqPublishDeliveryAck {
         percent = Math.min(Math.max(percent, 0), 100);
         this.lastPercent = percent;
         const bmDeliveryAck: types.ClientMessageDeliveryAck = { messageId: this.messageId, percent: percent };
-        this.sendMessageFn("deliveryAck", bmDeliveryAck);
+        this.sendMessageFn('deliveryAck', bmDeliveryAck);
         if (percent === 100)
             this.finalized = true;
     }
@@ -377,7 +377,7 @@ export class EngineMqPublishDeliveryAck {
 
         this.lastPercent = 100;
         const bmDeliveryAck: types.ClientMessageDeliveryAck = { messageId: this.messageId, percent: this.lastPercent, resolveReason: value };
-        this.sendMessageFn("deliveryAck", bmDeliveryAck);
+        this.sendMessageFn('deliveryAck', bmDeliveryAck);
         this.finalized = true;
     }
 
@@ -385,7 +385,7 @@ export class EngineMqPublishDeliveryAck {
         if (this.finalized)
             return;
         const bmDeliveryAck: types.ClientMessageDeliveryAck = { messageId: this.messageId, percent: this.lastPercent, rejectReason: reason, rejectRetryDelayMs: retryDelayMs };
-        this.sendMessageFn("deliveryAck", bmDeliveryAck);
+        this.sendMessageFn('deliveryAck', bmDeliveryAck);
         this.finalized = true;
     }
 
@@ -393,7 +393,7 @@ export class EngineMqPublishDeliveryAck {
         if (this.finalized)
             return;
         const bmDeliveryAck: types.ClientMessageDeliveryAck = { messageId: this.messageId, percent: this.lastPercent, rejectReason: reason, rejectRetryDelayMs: undefined };
-        this.sendMessageFn("deliveryAck", bmDeliveryAck);
+        this.sendMessageFn('deliveryAck', bmDeliveryAck);
         this.finalized = true;
     }
 }

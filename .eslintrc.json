@@ -83,7 +83,11 @@
                 "@typescript-eslint/no-throw-literal": "error",
                 "@typescript-eslint/no-useless-constructor": "error",
                 "@typescript-eslint/require-await": "error",
-                "@typescript-eslint/return-await": "error"
+                "@typescript-eslint/return-await": "error",
+                "@typescript-eslint/quotes": [
+                    "error",
+                    "single"
+                ]
             }
         }
     ],
@@ -164,6 +168,10 @@
         "@typescript-eslint/no-throw-literal": "error",
         "@typescript-eslint/no-useless-constructor": "error",
         "@typescript-eslint/require-await": "error",
-        "@typescript-eslint/return-await": "error"
+        "@typescript-eslint/return-await": "error",
+        "@typescript-eslint/quotes": [
+            "error",
+            "single"
+        ]
     }
 }
