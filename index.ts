@@ -99,8 +99,10 @@ export class EngineMqClient extends MsgpackSocket {
         if (!Array.isArray(channels))
             channels = [channels];
         for (const channel of channels) {
-            if (!channel.match(/^[a-z0-9.*#]+$/))
-                throw new EngineMqClientError(`Invalid subscribe: ${channel}`)
+            if (!channel.match(types.TOPIC_WILDCARD_MASK))
+                throw new EngineMqClientError(`EngineMQ subscribe invalid topic format: ${channel}`)
+            if (channel.length > types.TOPIC_LENGTH_MAX)
+                throw new EngineMqClientError(`EngineMQ subscribe topic too long: ${channel}`)
             if (!this._subscriptions.includes(channel))
                 this._subscriptions.push(channel);
         }
@@ -136,6 +138,10 @@ export class EngineMqClient extends MsgpackSocket {
 
         if (!new RegExp(types.MESSAGE_ID_MASK).test(messageOptions.messageId))
             throw new EngineMqClientError(`EngineMQ publish invalid messageId format: ${messageOptions.messageId}`);
+        if (!topic.match(types.TOPIC_MASK))
+            throw new EngineMqClientError(`EngineMQ publish invalid topic format: ${topic}`);
+        if (topic.length > types.TOPIC_LENGTH_MAX)
+            throw new EngineMqClientError(`EngineMQ publish topic too long: ${topic}`);
         if (messageOptions.delayMs && messageOptions.delayMs < 0)
             throw new EngineMqClientError(`EngineMQ publish invalid delayMs value: ${messageOptions.delayMs}`);
         if (messageOptions.expirationMs && messageOptions.expirationMs < 0)
