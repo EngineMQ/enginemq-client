@@ -1,7 +1,7 @@
 import { version as enginemq } from './package.json';
 import { diff as semverDiff, major as semverMajor } from 'semver';
 import { customAlphabet } from 'nanoid';
-import * as net from 'net';
+import * as net from 'node:net';
 
 import * as types from './common/messageTypes';
 import { validateObject } from './common/lib/ajv';
@@ -9,7 +9,6 @@ import { MsgpackSocket } from './common/lib/socket/MsgpackSocket';
 
 export * as types from './common/messageTypes';
 
-const nowMs = () => new Date().getTime();
 const HEARTBEAT_FREQ_PERCENT = 45;
 const RECONNECT_MAX_WAIT = 750;
 const ACK_WAITINGLIST_TIMEOUT_SEC = 30;
@@ -19,7 +18,7 @@ const nanoid = customAlphabet(types.MESSAGE_ID_ALPHABET, types.MESSAGE_ID_LENGTH
 
 export class EngineMqClientError extends Error { }
 
-type SendMessageFn = (cm: types.ClientMessageType, obj: object) => void;
+type SendMessageFunction = (cm: types.ClientMessageType, object: object) => void;
 
 export declare interface EngineMqClient extends MsgpackSocket {
     on(event: 'connect', listener: () => void): this;
@@ -27,7 +26,7 @@ export declare interface EngineMqClient extends MsgpackSocket {
     on(event: 'buffered_data', listener: (data: Buffer) => void): this;
     on(event: 'end', listener: () => void): this;
     on(event: 'close', listener: (hadError: boolean) => void): this;
-    on(event: 'obj_data', listener: (obj: object) => void): this;
+    on(event: 'obj_data', listener: (object: object) => void): this;
 
     on(event: 'mq-connected', listener: (reconnectCount: number) => void): this;
     on(event: 'mq-ready', listener: (serverVersion: string, heartbeatSec: number) => void): this;
@@ -46,7 +45,7 @@ export class EngineMqClient extends MsgpackSocket {
     private _connected = false;
     private _reConnected = 0 - 1;
     private _ready = false;
-    private _params: Required<EngineMqClientParams>;
+    private _params: Required<EngineMqClientParameters>;
     private _subscriptions: string[] = [];
 
     get ready() { return this._ready; }
@@ -55,17 +54,17 @@ export class EngineMqClient extends MsgpackSocket {
     get reconnectAllowed() { return this._allowReconnect; }
     set reconnectAllowed(value: boolean) { this._allowReconnect = value; if (value) this.reConnect(0) }
 
-    constructor(params: EngineMqClientParams) {
+    constructor(parameters: EngineMqClientParameters) {
         super(new net.Socket());
 
-        this._params = { ...defaultEngineMqClientParams, ...params };
+        this._params = { ...defaultEngineMqClientParameters, ...parameters };
 
-        this.on('obj_data', (obj: object) => this.onObjData(obj));
+        this.on('obj_data', (object: object) => this.onObjData(object));
 
         this.on('connect', () => {
             this._connected = true;
             this._reConnected++;
-            this.lastRcvHeartbeat = nowMs();
+            this.lastRcvHeartbeat = Date.now();
             this.emit('mq-connected', this.reconnectCount);
 
             const cmHello: types.ClientMessageHello = { clientId: this._params.clientId, maxWorkers: this._params.maxWorkers, version: enginemq };
@@ -82,7 +81,7 @@ export class EngineMqClient extends MsgpackSocket {
             this.reConnect();
         });
 
-        if (params.connectAutoStart)
+        if (parameters.connectAutoStart)
             this.reConnect(0);
     }
 
@@ -99,7 +98,7 @@ export class EngineMqClient extends MsgpackSocket {
         if (!Array.isArray(channels))
             channels = [channels];
         for (const channel of channels) {
-            if (!channel.match(types.TOPIC_WILDCARD_MASK))
+            if (!types.TOPIC_WILDCARD_MASK.test(channel))
                 throw new EngineMqClientError(`EngineMQ subscribe invalid topic format: ${channel}`)
             if (channel.length > types.TOPIC_LENGTH_MAX)
                 throw new EngineMqClientError(`EngineMQ subscribe topic too long: ${channel}`)
@@ -138,7 +137,7 @@ export class EngineMqClient extends MsgpackSocket {
 
         if (!new RegExp(types.MESSAGE_ID_MASK).test(messageOptions.messageId))
             throw new EngineMqClientError(`EngineMQ publish invalid messageId format: ${messageOptions.messageId}`);
-        if (!topic.match(types.TOPIC_MASK))
+        if (!types.TOPIC_MASK.test(topic))
             throw new EngineMqClientError(`EngineMQ publish invalid topic format: ${topic}`);
         if (topic.length > types.TOPIC_LENGTH_MAX)
             throw new EngineMqClientError(`EngineMQ publish topic too long: ${topic}`);
@@ -178,17 +177,17 @@ export class EngineMqClient extends MsgpackSocket {
                 Math.round(Math.random() * intervalMs));
     }
 
-    private sendMessage: SendMessageFn = (cm: types.ClientMessageType, obj: object) => {
+    private sendMessage: SendMessageFunction = (cm: types.ClientMessageType, object: object) => {
         const data: { [name: string]: object } = {};
-        data[cm as keyof object] = obj;
+        data[cm as keyof object] = object;
         super.sendObj(data);
-        this.lastSndHeartbeat = nowMs();
+        this.lastSndHeartbeat = Date.now();
     }
 
-    private lastRcvHeartbeat: number = nowMs();
+    private lastRcvHeartbeat: number = Date.now();
     private lastSndHeartbeat = 0;
     private processHeartbeat(sec: number) {
-        const now = nowMs();
+        const now = Date.now();
         if (now - this.lastSndHeartbeat > sec * 1000 / 100 * HEARTBEAT_FREQ_PERCENT) {
             const cmHeatbeat: types.ClientMessageHeartbeat = {};
             this.sendMessage('heartbeat', cmHeatbeat);
@@ -213,37 +212,37 @@ export class EngineMqClient extends MsgpackSocket {
         }
     }
 
-    private onObjData(obj: object) {
-        if (Object.keys(obj).length !== 1) return;
+    private onObjData(object: object) {
+        if (Object.keys(object).length !== 1) return;
 
-        const cmd = Object.keys(obj)[0] as types.BrokerMessageType;
-        const params = Object.values(obj)[0] as object;
+        const cmd = Object.keys(object)[0] as types.BrokerMessageType;
+        const parameters = Object.values(object)[0] as object;
 
-        this.lastRcvHeartbeat = nowMs();
+        this.lastRcvHeartbeat = Date.now();
 
         switch (cmd) {
             case 'welcome':
-                const bmWelcome = validateObject<types.BrokerMessageWelcome>(types.BrokerMessageWelcome, params);
+                const bmWelcome = validateObject<types.BrokerMessageWelcome>(types.BrokerMessageWelcome, parameters);
                 if (!bmWelcome) return;
                 this.onDataWelcome(bmWelcome);
                 break;
             case 'heartbeat':
-                if (validateObject<types.BrokerMessageHeartbeat>(types.BrokerMessageHeartbeat, params))
-                    this.lastRcvHeartbeat = nowMs();
+                if (validateObject<types.BrokerMessageHeartbeat>(types.BrokerMessageHeartbeat, parameters))
+                    this.lastRcvHeartbeat = Date.now();
                 break;
             case 'publishAck':
-                const bmPublishAck = validateObject<types.BrokerMessagePublishAck>(types.BrokerMessagePublishAck, params);
+                const bmPublishAck = validateObject<types.BrokerMessagePublishAck>(types.BrokerMessagePublishAck, parameters);
                 if (!bmPublishAck) return;
                 this.onDataPublishAck(bmPublishAck);
                 break;
             case 'delivery':
-                const bmDelivery = validateObject<types.BrokerMessageDelivery>(types.BrokerMessageDelivery, params);
+                const bmDelivery = validateObject<types.BrokerMessageDelivery>(types.BrokerMessageDelivery, parameters);
                 if (!bmDelivery) return;
                 const ack = new EngineMqPublishDeliveryAck(bmDelivery.options.messageId, this.sendMessage);
                 this.emit('mq-message', ack, bmDelivery.topic, bmDelivery.message, bmDelivery);
                 break;
             case 'deliveryreport':
-                const bmDeliveryReport = validateObject<types.BrokerMessageDeliveryReport>(types.BrokerMessageDeliveryReport, params);
+                const bmDeliveryReport = validateObject<types.BrokerMessageDeliveryReport>(types.BrokerMessageDeliveryReport, parameters);
                 if (!bmDeliveryReport) return;
                 this.emit('mq-delivery-report', bmDeliveryReport);
                 break;
@@ -276,14 +275,14 @@ export class EngineMqClient extends MsgpackSocket {
     private addToPublishAckWaitingList(messageId: string, resolver: (errorMessage?: string) => void) {
         this.publishAckWaitingList.set(messageId, {
             resolver: resolver,
-            time: nowMs()
+            time: Date.now()
         });
     }
     private maintainPublishAckWaitingListLastRun = 0;
     private maintainPublishAckWaitingList() {
         const expiredMs = ACK_WAITINGLIST_TIMEOUT_SEC * 1000;
         const frequencyMs = expiredMs / 2;
-        const now = nowMs();
+        const now = Date.now();
 
         if (now - this.maintainPublishAckWaitingListLastRun < frequencyMs)
             return;
@@ -311,17 +310,17 @@ export class EngineMqClient extends MsgpackSocket {
     }
 }
 
-export type EngineMqClientParams = {
+export type EngineMqClientParameters = {
     clientId?: string,
     host?: string,
     port?: number,
     connectAutoStart?: boolean,
     maxWorkers?: number,
 };
-export const defaultEngineMqClientParams: Required<EngineMqClientParams> = {
+export const defaultEngineMqClientParameters: Required<EngineMqClientParameters> = {
     clientId: '',
     host: '127.0.0.1',
-    port: 16677,
+    port: 16_677,
     connectAutoStart: false,
     maxWorkers: 1,
 };
@@ -347,9 +346,9 @@ export class EngineMqPublishDeliveryAck {
     private finalized = false;
     private messageId: string;
     private lastPercent = 0;
-    private sendMessageFn: SendMessageFn;
+    private sendMessageFn: SendMessageFunction;
 
-    constructor(messageId: string, sendMesage: SendMessageFn) {
+    constructor(messageId: string, sendMesage: SendMessageFunction) {
         this.messageId = messageId;
         this.sendMessageFn = sendMesage;
     }
