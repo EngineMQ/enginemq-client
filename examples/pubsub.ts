@@ -6,14 +6,17 @@ enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 100;
 
 const client = new enginemq.EngineMqClient({ clientId: 'xmpl-pubsub', connectAutoStart: false, maxWorkers: 4 });
 
+let timerA = 0;
+let timerB = 0;
+
 client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconnectCount));
 client.on('mq-ready', (serverVersion, heartbeatSec) => {
     console.log(["Ready: ", serverVersion, heartbeatSec]);
-    setTimeout(async () => {
+    timerA = setTimeout(async () => {
         if (args[0] != 'nopub')
             await publish(50, 100);
         client.subscribe(['log.event.#', 'log.*.wordpress']);
-    }, 1000);
+    }, 1000) as unknown as number;
 });
 client.on('mq-no-heartbeat', () => console.log("Missing heartbeat"));
 client.on('mq-disconnected', () => console.log("Disconnected"));
@@ -36,6 +39,12 @@ client.on('mq-message', (
 // client.subscribe(['log.event.#', 'log.*.wordpress']);
 client.connect();
 
+setTimeout(() => {
+    client.close();
+    clearInterval(timerA);
+    clearTimeout(timerB);
+}, 5000);
+
 const publish = async (count: number, reinit: number = 0): Promise<void> => {
     try {
         if (client.connected) {
@@ -55,5 +64,5 @@ const publish = async (count: number, reinit: number = 0): Promise<void> => {
         console.log(`Error: ${error instanceof Error ? error.message : ''}`)
     }
     if (reinit)
-        setTimeout(publish, reinit, count, reinit);
+        timerB = setTimeout(publish, reinit, count, reinit) as unknown as number;
 }

@@ -42,6 +42,7 @@ export declare interface EngineMqClient extends MsgpackSocket {
 }
 export class EngineMqClient extends MsgpackSocket {
     private _allowReconnect = true;
+    private _reconnectTimer = 0;
     private _connected = false;
     private _reConnected = 0 - 1;
     private _ready = false;
@@ -92,6 +93,13 @@ export class EngineMqClient extends MsgpackSocket {
     public override connect() {
         this._allowReconnect = true;
         this.reConnect(0);
+    }
+
+    public close() {
+        this._allowReconnect = false;
+        if (this._reconnectTimer)
+            clearTimeout(this._reconnectTimer);
+        super.end();
     }
 
     public subscribe(channels: string | string[]) {
@@ -172,9 +180,9 @@ export class EngineMqClient extends MsgpackSocket {
 
     private reConnect(intervalMs = RECONNECT_MAX_WAIT) {
         if (this._allowReconnect && !this._connected)
-            setTimeout(
+            this._reconnectTimer = setTimeout(
                 () => super.connect(this._params.port, this._params.host),
-                Math.round(Math.random() * intervalMs));
+                Math.round(Math.random() * intervalMs)) as unknown as number;
     }
 
     private sendMessage: SendMessageFunction = (cm: types.ClientMessageType, object: object) => {
