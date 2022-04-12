@@ -54,6 +54,7 @@ const publish = async (count: number, reinit: number = 0): Promise<void> => {
                     { str: `Example data #${i}` },
                     {
                         priority: i % 2 == 0 ? enginemq.types.MessagePriority.High : enginemq.types.MessagePriority.Normal,
+                        //messageId: 'X',
                         //delayMs: 15000,
                         //expirationMs: i % 4 == 0 ? 1400 : 0,
                     });
