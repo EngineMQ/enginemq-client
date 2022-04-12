@@ -4,7 +4,7 @@ const args = process.argv.slice(2);
 
 enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 100;
 
-const client = new enginemq.EngineMqClient({ clientId: 'xmpl-pubsub', connectAutoStart: false, maxWorkers: 4 });
+const client = new enginemq.EngineMqClient({ clientId: 'xmpl-pubsub', authToken: 'iF3R0Hn6XKrwUbFaB7shot9uUratjOVI', connectAutoStart: false, maxWorkers: 4 });
 
 let timerA = 0;
 let timerB = 0;
@@ -39,11 +39,11 @@ client.on('mq-message', (
 // client.subscribe(['log.event.#', 'log.*.wordpress']);
 client.connect();
 
-setTimeout(() => {
-    client.close();
-    clearInterval(timerA);
-    clearTimeout(timerB);
-}, 5000);
+// setTimeout(() => {
+//     client.close();
+//     clearInterval(timerA);
+//     clearTimeout(timerB);
+// }, 5000);
 
 const publish = async (count: number, reinit: number = 0): Promise<void> => {
     try {

@@ -5,7 +5,7 @@ const args = process.argv.slice(2);
 
 enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 1500;
 
-const client = new enginemq.EngineMqClient({ clientId: 'Cli-ONE', connectAutoStart: false, maxWorkers: 4 });
+const client = new enginemq.EngineMqClient({ clientId: 'Cli-ONE', authToken: 'iF3R0Hn6XKrwUbFaB7shot9uUratjOVI', connectAutoStart: false, maxWorkers: 4 });
 
 client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconnectCount));
 client.on('mq-ready', (serverVersion, heartbeatSec) => {
@@ -54,7 +54,7 @@ client.on('mq-message', (
 });
 
 if (args[0] == 'subscribe')
-    client.subscribe(['log.event.#', 'log.*.wordpress']);
+    client.subscribe(['log.event.#', 'log.*.wordpress', 'log.*']);
 client.connect();
 console.log(client.subscriptions);
 
