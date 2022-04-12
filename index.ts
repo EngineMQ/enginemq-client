@@ -169,10 +169,10 @@ export class EngineMqClient extends MsgpackSocket {
             const messageId = (messageOptions as types.ClientMessagePublishOptions).messageId;
             this.addToPublishAckWaitingList(
                 messageId,
-                (errorCode?: string, errorMessage?: string) => {
+                (errorMessage?: string) => {
                     clearTimeout(timerTimeout);
-                    if (errorCode)
-                        reject(new Error(`[${errorCode}] ${errorMessage || ''}`))
+                    if (errorMessage)
+                        reject(new Error(errorMessage))
                     else
                         resolve(messageId);
                 });
@@ -263,10 +263,10 @@ export class EngineMqClient extends MsgpackSocket {
     }
 
     private onDataWelcome(bmWelcome: types.BrokerMessageWelcome) {
-        if (bmWelcome.errorCode) {
+        if (bmWelcome.errorMessage) {
             this._allowReconnect = false;
             this.destroy();
-            throw new Error(`[${bmWelcome.errorCode}] ${bmWelcome.errorMessage || ''}`);
+            throw new Error(bmWelcome.errorMessage);
         }
         const diff = semverDiff(bmWelcome.version, libraryEngineMQVersion);
         if (diff && ['major', 'premajor'].includes(diff)) {
@@ -287,10 +287,10 @@ export class EngineMqClient extends MsgpackSocket {
     private publishAckWaitingList = new Map<
         string,
         {
-            resolver: (errorCode?: string, errorMessage?: string) => void,
+            resolver: (errorMessage?: string) => void,
             time: number
         }>();
-    private addToPublishAckWaitingList(messageId: string, resolver: (errorCode?: string, errorMessage?: string) => void) {
+    private addToPublishAckWaitingList(messageId: string, resolver: (errorMessage?: string) => void) {
         this.publishAckWaitingList.set(messageId, {
             resolver: resolver,
             time: Date.now()
@@ -322,7 +322,7 @@ export class EngineMqClient extends MsgpackSocket {
         const wlItem = this.publishAckWaitingList.get(bmPublishAck.messageId);
         this.publishAckWaitingList.delete(bmPublishAck.messageId);
         if (wlItem)
-            wlItem.resolver(bmPublishAck.errorCode, bmPublishAck.errorMessage);
+            wlItem.resolver(bmPublishAck.errorMessage);
 
         this.maintainPublishAckWaitingList();
     }
