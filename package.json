@@ -3,7 +3,7 @@
   "description": "EngineMQ Message queue Client lib",
   "author": "BCsabaEngine <csaba@balazs-magyar.hu>",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "./index.js",
   "types": "./index.d.ts",
   "engines": {
