@@ -13,7 +13,7 @@ client.on('mq-ready', () => {
     if (args[0] == 'publish')
         loop();
 });
-client.on('mq-error', (errorMessage: string) => console.log("Error: " + errorMessage));
+client.on('mq-error', (errorType: string, errorMessage: string, data: any) => console.log("Error " + errorType + ': ' + errorMessage, data));
 client.on('mq-disconnected', () => {
     breakLoop = true;
     console.log("Disconnected")

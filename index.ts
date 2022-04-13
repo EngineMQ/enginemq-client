@@ -39,7 +39,7 @@ export declare interface EngineMqClient extends MsgpackSocket {
         messageInfo: types.BrokerMessageDelivery
     ) => void): this;
     on(event: 'mq-delivery-report', listener: (report: types.BrokerMessageDeliveryReport) => void): this;
-    on(event: 'mq-error', listener: (errorMessage: string, data?: any) => void): this;
+    on(event: 'mq-error', listener: (errorType: string, errorMessage: string, data?: any) => void): this;
 }
 export class EngineMqClient extends MsgpackSocket {
     private _allowReconnect = true;
@@ -208,7 +208,7 @@ export class EngineMqClient extends MsgpackSocket {
         }
         if (now - this.lastRcvHeartbeat > sec * 1000) {
             this.clearHeartbeat();
-            this.emit('mq-error', 'Heartbeat did not arrive on time');
+            this.emit('mq-error', 'HEARTBEAT', 'Heartbeat did not arrive on time');
             this.destroy();
         }
     }
@@ -271,7 +271,7 @@ export class EngineMqClient extends MsgpackSocket {
     private onDataLoginAck(bmLoginAck: types.BrokerMessageLoginAck) {
         if (bmLoginAck.errorMessage) {
             this._allowReconnect = false;
-            this.emit('mq-error', bmLoginAck.errorMessage);
+            this.emit('mq-error', 'LOGIN', bmLoginAck.errorMessage);
             this.destroy();
             return;
         }
@@ -312,9 +312,11 @@ export class EngineMqClient extends MsgpackSocket {
         this.maintainPublishAckWaitingListLastRun = now;
     }
     private onDataSubscribeAck(bmSubscribeAck: types.BrokerMessageSubscribeAck) {
-        if (bmSubscribeAck.errors.length === 0)
+        const errors = bmSubscribeAck.errors.filter(error => error.errorMessage);
+        if (errors.length === 0)
             return;
-        this.emit('mq-error', 'Cannot subscribe to following topics', bmSubscribeAck.errors);
+
+        this.emit('mq-error', 'SUBSCRIBE', 'Cannot subscribe to following topics', errors);
     }
     private onDataPublishAck(bmPublishAck: types.BrokerMessagePublishAck) {
         if (!bmPublishAck.messageId)

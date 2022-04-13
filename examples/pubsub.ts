@@ -18,7 +18,7 @@ client.on('mq-ready', () => {
         client.subscribe(['log.event.#', 'log.*.wordpress']);
     }, 1000) as unknown as number;
 });
-client.on('mq-error', (errorMessage: string, data: any) => console.log("Error: " + errorMessage, data));
+client.on('mq-error', (errorCode: string, errorMessage: string, data: any) => console.log("Error " + errorCode + ': ' + errorMessage, data));
 client.on('mq-disconnected', () => console.log("Disconnected"));
 
 client.on('mq-message', (
