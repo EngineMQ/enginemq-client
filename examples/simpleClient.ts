@@ -8,12 +8,12 @@ enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 1500;
 const client = new enginemq.EngineMqClient({ clientId: 'Cli-ONE', authToken: 'iF3R0Hn6XKrwUbFaB7shot9uUratjOVI', connectAutoStart: false, maxWorkers: 4 });
 
 client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconnectCount));
-client.on('mq-ready', (serverVersion, heartbeatSec) => {
-    console.log(["Ready: ", serverVersion, heartbeatSec]);
+client.on('mq-ready', () => {
+    console.log("Ready");
     if (args[0] == 'publish')
         loop();
 });
-client.on('mq-no-heartbeat', () => console.log("Missing heartbeat"));
+client.on('mq-error', (errorMessage: string) => console.log("Error: " + errorMessage));
 client.on('mq-disconnected', () => {
     breakLoop = true;
     console.log("Disconnected")

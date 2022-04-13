@@ -10,15 +10,15 @@ let timerA = 0;
 let timerB = 0;
 
 client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconnectCount));
-client.on('mq-ready', (serverVersion, heartbeatSec) => {
-    console.log(["Ready: ", serverVersion, heartbeatSec]);
+client.on('mq-ready', () => {
+    console.log("Ready");
     timerA = setTimeout(async () => {
         if (args[0] != 'nopub')
             await publish(50, 100);
         client.subscribe(['log.event.#', 'log.*.wordpress']);
     }, 1000) as unknown as number;
 });
-client.on('mq-no-heartbeat', () => console.log("Missing heartbeat"));
+client.on('mq-error', (errorMessage: string, data: any) => console.log("Error: " + errorMessage, data));
 client.on('mq-disconnected', () => console.log("Disconnected"));
 
 client.on('mq-message', (

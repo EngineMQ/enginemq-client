@@ -5,8 +5,8 @@ enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 100;
 const client = new enginemq.EngineMqClient({ clientId: 'xmpl-resend', connectAutoStart: false, maxWorkers: 4 });
 let index = 0;
 
-client.on('mq-ready', (serverVersion, heartbeatSec) => {
-    console.log(["Ready: ", serverVersion, heartbeatSec]);
+client.on('mq-ready', () => {
+    console.log("Ready");
     setInterval(async () => {
         if (client.connected)
             try {
