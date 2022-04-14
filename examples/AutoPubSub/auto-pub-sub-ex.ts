@@ -16,10 +16,12 @@ client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconn
 client.on('mq-error', (errorCode: string, errorMessage: string, data: any) => console.log("Error " + errorCode + ': ' + errorMessage, data));
 client.on('mq-disconnected', () => console.log("Disconnected"));
 
-client.on('mq-ready', () => {
+client.on('mq-ready', async () => {
     console.log("Ready");
 
     client.subscribe(['log.event.*', 'log.#.plugins']);
+
+    await publish(20);
     setInterval(async () => {
         await publish(20);
     }, 3 * 1000);

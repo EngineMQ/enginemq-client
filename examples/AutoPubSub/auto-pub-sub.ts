@@ -6,6 +6,7 @@ enginemq.defaultEngineMqPublishClientOptions.timeoutMs = 100;
 
 const client = new enginemq.EngineMqClient({
     clientId: 'example-autopubsub',
+    // host: '10.152.183.77', //'10.1.218.86',
     // authToken: '????', 
     connectAutoStart: false,
     maxWorkers: 4
@@ -15,10 +16,12 @@ client.on('mq-connected', (reconnectCount) => console.log("Connected: " + reconn
 client.on('mq-error', (errorCode: string, errorMessage: string, data: any) => console.log("Error " + errorCode + ': ' + errorMessage, data));
 client.on('mq-disconnected', () => console.log("Disconnected"));
 
-client.on('mq-ready', () => {
+client.on('mq-ready', async () => {
     console.log("Ready");
 
     client.subscribe(['log.event.*', 'log.#.plugins']);
+
+    await publish(20);
     setInterval(async () => {
         await publish(20);
     }, 3 * 1000);
